@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>30 Day Calisthenics</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:system-ui;
+margin:0;
+padding:0;
+}
+
+body{
+background:#0f172a;
+color:white;
+height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+text-align:center;
+padding:16px;
+font-size:20px;
+background:#020617;
+}
+
+main{
+flex:1;
+overflow:hidden;
+position:relative;
+}
+
+.page{
+display:none;
+height:100%;
+overflow:auto;
+padding:20px;
+}
+
+.active{
+display:block;
+}
+
+.slider{
+display:flex;
+transition:0.35s;
+}
+
+.day{
+min-width:100%;
+padding:20px;
+}
+
+.card{
+background:#1e293b;
+padding:18px;
+border-radius:12px;
+margin-top:12px;
+line-height:1.6;
+}
+
+button{
+background:#f97316;
+border:none;
+padding:10px 14px;
+border-radius:8px;
+color:white;
+font-weight:bold;
+margin-top:14px;
+}
+
+button.done{
+background:#22c55e;
+}
+
+nav{
+display:flex;
+justify-content:space-around;
+background:#020617;
+padding:12px 0;
+}
+
+nav button{
+background:none;
+color:white;
+}
+
+.progressRing{
+width:180px;
+height:180px;
+border-radius:50%;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:32px;
+border:12px solid #1e293b;
+margin-top:40px;
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+.calDay{
+background:#1e293b;
+padding:12px;
+border-radius:8px;
+text-align:center;
+cursor:pointer;
+}
+
+.calDay.done{
+background:#22c55e;
+}
+
+.timer{
+text-align:center;
+margin-top:30px;
+}
+
+.timerDisplay{
+font-size:40px;
+margin:10px;
+}
+
+@media(min-width:700px){
+
+.day{
+max-width:600px;
+margin:auto;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>30 Day Calisthenics</header>
+
+<main>
+
+<!-- WORKOUT PAGE -->
+
+<div class="page active" id="workoutPage">
+
+<div class="slider" id="slider"></div>
+
+</div>
+
+<!-- PROGRESS PAGE -->
+
+<div class="page" id="progressPage">
+
+<div class="progressRing" id="progressRing">0%</div>
+
+<h3 style="text-align:center;margin-top:20px">
+Streak: <span id="streak">0</span> days
+</h3>
+
+<div class="calendar" id="calendar"></div>
+
+</div>
+
+<!-- TIMER PAGE -->
+
+<div class="page" id="timerPage">
+
+<div class="timer">
+
+<h2>Workout Timer</h2>
+
+<div class="timerDisplay" id="timer">30</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="resetTimer()">Reset</button>
+
+</div>
+
+</div>
+
+</main>
+
+<nav>
+
+<button onclick="showPage('workoutPage')">Workouts</button>
+<button onclick="showPage('progressPage')">Progress</button>
+<button onclick="showPage('timerPage')">Timer</button>
+
+</nav>
+
+<script>
+
+const workouts=[
+
+{title:"Day 1",text:"Wall Pushups\nIncline Pushups\nPlank\nDead Hang"},
+{title:"Day 3",text:"Squats\nLunges\nGlute Bridges\nCalf Raises"},
+{title:"Day 5",text:"Modified Burpees\nBear Crawl\nSuperman\nHollow Hold"},
+{title:"Day 8",text:"Wall Pushups\nIncline Pushups\nPlank\nShoulder Taps"},
+{title:"Day 10",text:"Squats\nWalking Lunges\nSingle Glute Bridge\nWall Sit"},
+{title:"Day 12",text:"Burpees\nBear Crawl\nSuperman\nHollow Hold"},
+{title:"Day 15",text:"Incline Pushups\nPushups\nPlank Down Dog"},
+{title:"Day 17",text:"Jump Squats\nBulgarian Split Squats"},
+{title:"Day 19",text:"Burpees\nMountain Climbers\nArch Hold"},
+{title:"Day 22",text:"Pushups\nDiamond Pushups\nPlank"},
+{title:"Day 24",text:"Pistol Squat\nJump Squats\nCossack Squats"},
+{title:"Day 26",text:"Spiderman Pushups\nV Ups\nPullup Negatives"},
+{title:"Day 30",text:"Final Strength Test"}
+]
+
+const slider=document.getElementById("slider")
+
+workouts.forEach((w,i)=>{
+
+let done=localStorage.getItem("day"+i)
+
+slider.innerHTML+=`
+
+<div class="day">
+
+<h2>${w.title}</h2>
+
+<div class="card">
+${w.text.replace(/\n/g,"<br>")}
+</div>
+
+<button onclick="complete(${i})"
+class="${done?'done':''}">
+${done?'Completed':'Mark Done'}
+</button>
+
+</div>
+
+`
+
+})
+
+function complete(i){
+
+localStorage.setItem("day"+i,"1")
+
+updateProgress()
+
+location.reload()
+
+}
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active")
+})
+
+document.getElementById(id).classList.add("active")
+
+}
+
+let index=0
+let startX=0
+
+document.addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX
+})
+
+document.addEventListener("touchend",e=>{
+
+let diff=e.changedTouches[0].clientX-startX
+
+if(diff>50) prev()
+if(diff<-50) next()
+
+})
+
+function next(){
+
+if(index<workouts.length-1){
+index++
+updateSlide()
+}
+
+}
+
+function prev(){
+
+if(index>0){
+index--
+updateSlide()
+}
+
+}
+
+function updateSlide(){
+
+slider.style.transform="translateX(-"+index*100+"%)"
+
+}
+
+function updateProgress(){
+
+let done=0
+
+for(let i=0;i<workouts.length;i++){
+
+if(localStorage.getItem("day"+i)) done++
+
+}
+
+let percent=Math.round(done/workouts.length*100)
+
+document.getElementById("progressRing").innerText=percent+"%"
+
+}
+
+updateProgress()
+
+const calendar=document.getElementById("calendar")
+
+for(let i=0;i<30;i++){
+
+let done=localStorage.getItem("day"+i)
+
+calendar.innerHTML+=`
+
+<div class="calDay ${done?'done':''}">
+${i+1}
+</div>
+
+`
+
+}
+
+let time=30
+let timer
+
+function startTimer(){
+
+timer=setInterval(()=>{
+
+time--
+document.getElementById("timer").innerText=time
+
+if(time==0){
+clearInterval(timer)
+}
+
+},1000)
+
+}
+
+function resetTimer(){
+
+clearInterval(timer)
+time=30
+document.getElementById("timer").innerText=time
+
+}
+
+</script>
+
+</body>
+
+</html>
