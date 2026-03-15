@@ -1,33 +1,35 @@
+```html
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>30 Day Calisthenics</title>
 
 <style>
 
 *{
 box-sizing:border-box;
-font-family:system-ui;
 margin:0;
 padding:0;
+font-family:system-ui;
 }
 
 body{
 background:#0f172a;
 color:white;
-height:100vh;
 display:flex;
 flex-direction:column;
+height:100vh;
 }
 
 header{
-text-align:center;
-padding:16px;
-font-size:20px;
 background:#020617;
+padding:18px;
+text-align:center;
+font-size:20px;
+font-weight:600;
 }
 
 main{
@@ -54,28 +56,69 @@ transition:0.35s;
 
 .day{
 min-width:100%;
-padding:20px;
+padding:10px;
+max-width:650px;
+margin:auto;
 }
 
-.card{
+.dayHeader{
+background:linear-gradient(135deg,#f97316,#fb923c);
+padding:24px;
+border-radius:16px;
+margin-bottom:20px;
+}
+
+.dayTitle{
+font-size:24px;
+font-weight:700;
+}
+
+.daySubtitle{
+opacity:0.9;
+margin-top:6px;
+}
+
+.exercise{
 background:#1e293b;
-padding:18px;
-border-radius:12px;
-margin-top:12px;
-line-height:1.6;
+padding:16px;
+border-radius:14px;
+margin-bottom:12px;
+border:1px solid rgba(255,255,255,0.05);
 }
 
-button{
-background:#f97316;
+.exerciseName{
+font-size:17px;
+font-weight:600;
+}
+
+.exerciseMeta{
+font-size:14px;
+opacity:0.8;
+margin-top:4px;
+}
+
+.badge{
+display:inline-block;
+background:#020617;
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+margin-top:6px;
+}
+
+.completeBtn{
+width:100%;
+margin-top:18px;
+padding:14px;
 border:none;
-padding:10px 14px;
-border-radius:8px;
+border-radius:12px;
+font-size:16px;
+font-weight:600;
+background:#f97316;
 color:white;
-font-weight:bold;
-margin-top:14px;
 }
 
-button.done{
+.completeBtn.done{
 background:#22c55e;
 }
 
@@ -83,12 +126,14 @@ nav{
 display:flex;
 justify-content:space-around;
 background:#020617;
-padding:12px 0;
+padding:10px 0;
 }
 
 nav button{
 background:none;
+border:none;
 color:white;
+font-size:14px;
 }
 
 .progressRing{
@@ -96,19 +141,19 @@ width:180px;
 height:180px;
 border-radius:50%;
 margin:auto;
+margin-top:40px;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:32px;
+font-size:34px;
 border:12px solid #1e293b;
-margin-top:40px;
 }
 
 .calendar{
 display:grid;
-grid-template-columns:repeat(5,1fr);
+grid-template-columns:repeat(6,1fr);
 gap:10px;
-margin-top:20px;
+margin-top:30px;
 }
 
 .calDay{
@@ -116,7 +161,6 @@ background:#1e293b;
 padding:12px;
 border-radius:8px;
 text-align:center;
-cursor:pointer;
 }
 
 .calDay.done{
@@ -125,21 +169,16 @@ background:#22c55e;
 
 .timer{
 text-align:center;
-margin-top:30px;
+margin-top:40px;
 }
 
 .timerDisplay{
-font-size:40px;
-margin:10px;
+font-size:42px;
+margin:12px;
 }
 
-@media(min-width:700px){
-
-.day{
-max-width:600px;
-margin:auto;
-}
-
+button{
+cursor:pointer;
 }
 
 </style>
@@ -205,40 +244,88 @@ Streak: <span id="streak">0</span> days
 
 const workouts=[
 
-{title:"Day 1",text:"Wall Pushups\nIncline Pushups\nPlank\nDead Hang"},
-{title:"Day 3",text:"Squats\nLunges\nGlute Bridges\nCalf Raises"},
-{title:"Day 5",text:"Modified Burpees\nBear Crawl\nSuperman\nHollow Hold"},
-{title:"Day 8",text:"Wall Pushups\nIncline Pushups\nPlank\nShoulder Taps"},
-{title:"Day 10",text:"Squats\nWalking Lunges\nSingle Glute Bridge\nWall Sit"},
-{title:"Day 12",text:"Burpees\nBear Crawl\nSuperman\nHollow Hold"},
-{title:"Day 15",text:"Incline Pushups\nPushups\nPlank Down Dog"},
-{title:"Day 17",text:"Jump Squats\nBulgarian Split Squats"},
-{title:"Day 19",text:"Burpees\nMountain Climbers\nArch Hold"},
-{title:"Day 22",text:"Pushups\nDiamond Pushups\nPlank"},
-{title:"Day 24",text:"Pistol Squat\nJump Squats\nCossack Squats"},
-{title:"Day 26",text:"Spiderman Pushups\nV Ups\nPullup Negatives"},
-{title:"Day 30",text:"Final Strength Test"}
+{
+title:"Day 1",
+subtitle:"Upper Body Push & Core",
+exercises:[
+["Wall Pushups","3 sets • 8-10 reps"],
+["Incline Pushups","3 sets • 5-8 reps"],
+["Plank Hold","3 sets • 20 sec"],
+["Dead Hang","3 sets • 10 sec"]
+]
+},
+
+{
+title:"Day 3",
+subtitle:"Lower Body",
+exercises:[
+["Bodyweight Squats","3 sets • 15 reps"],
+["Assisted Lunges","3 sets • 8 / leg"],
+["Glute Bridges","3 sets • 15 reps"],
+["Calf Raises","3 sets • 20 reps"]
+]
+},
+
+{
+title:"Day 5",
+subtitle:"Full Body",
+exercises:[
+["Modified Burpees","3 sets • 8 reps"],
+["Bear Crawl","20 seconds"],
+["Superman Hold","15 seconds"],
+["Hollow Hold","15 seconds"]
+]
+}
+
 ]
 
 const slider=document.getElementById("slider")
 
-workouts.forEach((w,i)=>{
+workouts.forEach((day,i)=>{
 
 let done=localStorage.getItem("day"+i)
+
+let exerciseHTML=""
+
+day.exercises.forEach(e=>{
+
+exerciseHTML+=`
+
+<div class="exercise">
+
+<div class="exerciseName">${e[0]}</div>
+
+<div class="exerciseMeta">${e[1]}</div>
+
+<span class="badge">Strength</span>
+
+</div>
+
+`
+
+})
 
 slider.innerHTML+=`
 
 <div class="day">
 
-<h2>${w.title}</h2>
+<div class="dayHeader">
 
-<div class="card">
-${w.text.replace(/\n/g,"<br>")}
+<div class="dayTitle">${day.title}</div>
+
+<div class="daySubtitle">${day.subtitle}</div>
+
+<span class="badge">Beginner</span>
+
 </div>
 
+${exerciseHTML}
+
 <button onclick="complete(${i})"
-class="${done?'done':''}">
-${done?'Completed':'Mark Done'}
+class="completeBtn ${done?'done':''}">
+
+${done?'Workout Completed ✓':'Complete Workout'}
+
 </button>
 
 </div>
@@ -250,8 +337,6 @@ ${done?'Completed':'Mark Done'}
 function complete(i){
 
 localStorage.setItem("day"+i,"1")
-
-updateProgress()
 
 location.reload()
 
@@ -370,5 +455,5 @@ document.getElementById("timer").innerText=time
 </script>
 
 </body>
-
 </html>
+```
